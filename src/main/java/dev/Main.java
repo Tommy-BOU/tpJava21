@@ -1,14 +1,17 @@
 package dev;
 
 import dev.animals.Animal;
+import dev.animals.Horse;
+import dev.animals.Rabbit;
+import dev.animals.Turtle;
 
 public class Main {
     public static void main(String[] args) {
         boolean gameOver = false;
 
-        Animal turtle = new Animal("Tortue", "🐢");
-        Animal rabbit = new Animal("Lapin", "🐇");
-        Animal horse = new Animal("Cheval", "🐎");
+        Turtle turtle = new Turtle();
+        Rabbit rabbit = new Rabbit();
+        Horse horse = new Horse();
 
         Thread t1 = new Thread(turtle::run);
         Thread t2 = new Thread(rabbit::run);
@@ -17,12 +20,6 @@ public class Main {
         t1.start();
         t2.start();
         t3.start();
-
-        System.out.println("Course terminée !");
-        System.out.println("Classement final :");
-        System.out.println(turtle.createPositionString());
-        System.out.println(rabbit.createPositionString());
-        System.out.println(horse.createPositionString());
 
     }
 }

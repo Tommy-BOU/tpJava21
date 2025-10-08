@@ -1,5 +1,7 @@
 package dev.animals;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public sealed class Animal permits Turtle, Rabbit, Horse {
@@ -7,12 +9,9 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
     private double position = 0;
     private String name;
     private String icon;
-    private boolean hasWon = false;
     public Random rand = new Random();
 
-    public Animal(String name, String icon) {
-        this.name = name;
-        this.icon = icon;
+    public Animal() {
         RaceManager.getInstance().addAnimal(this);
     }
 
@@ -20,27 +19,41 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
      * Starts the animal's movement.
      */
     public synchronized void run(){
+
+//        Check of the race is over
         while (!RaceManager.getInstance().isRaceOver()) {
+
+//            increment position with a random integer
             this.position += rand.nextInt(10);
 
             if (this.position > totalDistance){
                 this.position = totalDistance;
             }
 
+//            Check if position is equals to or exceeds the total distance of the race
             if (position >= totalDistance ) {
+//                If so, set the race as over and the winner in the RaceManager singleton instance and interrupt the thread
                 RaceManager.getInstance().setRaceIsOver(true);
                 RaceManager.getInstance().setWinner(this);
                 Thread.currentThread().interrupt();
             } else {
+//                If not, print the position of the animal
                 System.out.println(createPositionString());
             }
 
+//            try catch block to determine the interval of each call of the run method
             try {
-                Thread.sleep(1000);
+                Thread.sleep(rand.nextInt(1000));
             } catch (InterruptedException e) {
+//                The catch block is triggered when the thread is interrupted
                 System.out.println("Course terminée !");
                 System.out.println("Vainqueur : " + RaceManager.getInstance().getWinner());
                 System.out.println("Classement final :");
+                List<String> leaderboard = RaceManager.getInstance().getLeaderboard();
+                for (String name : leaderboard){
+                    System.out.println("Numéro " + (leaderboard.indexOf(name) + 1) + " : " + name);
+                }
+                System.out.println("État final de la course :");
                 for (Animal animal : RaceManager.getInstance().getAnimals())
                 {
                     System.out.println(animal.createPositionString());
@@ -55,11 +68,10 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
      * @return A string representing the animal's position.
      */
     public String createPositionString(){
-        StringBuilder positionString = new StringBuilder();
         int percent = (int)((this.position / this.totalDistance) * 100);
-        positionString.append("-".repeat(Math.max(0, percent)));
-        positionString.append(icon);
-        positionString.append("-".repeat(Math.max(0, 100 - percent)));
+        String positionString = "-".repeat(Math.max(0, percent)) +
+                this.getIcon() +
+                "-".repeat(Math.max(0, 100 - percent));
         return (this.getName() + " : " + positionString + percent + "%");
     }
     public double getTotalDistance() {
@@ -78,20 +90,23 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean hasWon() {
-        return hasWon;
-    }
-
-    public synchronized void setHasWon(boolean hasWon) {
-        this.hasWon = hasWon;
+    public String getIcon() {
+        return icon;
     }
 
     @Override
     public String toString() {
-        return name + " " + icon;
+        return this.getName() + " " + this.getIcon();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Animal animal)) return false;
+        return Double.compare(position, animal.position) == 0 && Objects.equals(name, animal.name) && Objects.equals(icon, animal.icon);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(totalDistance, position, name, icon);
     }
 }

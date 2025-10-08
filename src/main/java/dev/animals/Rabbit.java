@@ -3,8 +3,17 @@ package dev.animals;
 import java.util.Random;
 
 public final class Rabbit extends Animal{
+    private final String name = "Lapin";
+    private final String icon = "🐇";
 
-    public Rabbit(String name, String icon){
-        super(name, icon);
+    @Override
+    public String getName() {
+        return name;
     }
+
+    @Override
+    public String getIcon() {
+        return icon;
+    }
+
 }

@@ -4,7 +4,18 @@ import java.util.Random;
 
 public final class Horse extends Animal{
 
-    public Horse(String name, String icon){
-        super(name, icon);
+    private final String name = "Cheval";
+    private final String icon = "🐎";
+
+
+    @Override
+    public String getName() {
+        return name;
     }
+
+    @Override
+    public String getIcon() {
+        return icon;
+    }
+
 }

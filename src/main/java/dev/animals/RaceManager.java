@@ -19,6 +19,13 @@ public class RaceManager {
         return instance;
     }
 
+    public List<String> getLeaderboard(){
+        return animals.stream()
+                .sorted((a, b) -> Double.compare(b.getPosition(), a.getPosition()))
+                .map(Animal::toString)
+                .toList();
+    }
+
     public List<Animal> getAnimals() {
         return animals;
     }
