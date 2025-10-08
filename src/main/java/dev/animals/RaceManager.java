@@ -64,7 +64,7 @@ public class RaceManager {
         System.out.println("Course terminée !");
         System.out.println("Nombre total de manches : " + maxLaps);
         System.out.println("Nombre de victoires :");
-        for (Map.Entry<String, Integer> entry : raceWinners.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).toList()) {
+        for (Map.Entry<String, Integer> entry : getRaceWinnerSorted() ) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
         System.out.println("Le gagnant est : " + getRaceWinner() + " !");
@@ -95,6 +95,10 @@ public class RaceManager {
         return raceWinners.keySet().stream().findFirst().get();
     }
 
+    public List<Map.Entry<String, Integer>> getRaceWinnerSorted()
+    {
+        return raceWinners.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).toList();
+    }
     public List<Animal> getAnimals() {
         return animals;
     }
