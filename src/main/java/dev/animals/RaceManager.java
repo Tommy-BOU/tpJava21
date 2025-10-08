@@ -77,6 +77,7 @@ public class RaceManager {
         for (Animal animal : animals) {
             animal.setPosition(0);
         }
+        lapWinner = null;
     }
 
     /**
@@ -92,7 +93,17 @@ public class RaceManager {
     }
 
     public String getRaceWinner(){
-        return raceWinners.keySet().stream().findFirst().get();
+        Set<Integer> valueSet = new HashSet<>(raceWinners.values());
+//      Check if all keys in the raceWinners map have the same value. If they do return "Égalité". If not return the winner.
+        if (valueSet.size() == 1) {
+            return "Égalité !";
+        } else {
+            return raceWinners.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .findFirst()
+                    .map(Map.Entry::getKey)
+                    .orElse(null);
+        }
     }
 
     public List<Map.Entry<String, Integer>> getRaceWinnerSorted()
