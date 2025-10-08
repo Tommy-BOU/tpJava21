@@ -14,7 +14,7 @@ public class Main {
         Thread t1 = new Thread(turtle::run);
         Thread t2 = new Thread(rabbit::run);
         Thread t3 = new Thread(horse::run);
-
+        System.out.println("Début de la course");
         t1.start();
         t2.start();
         t3.start();

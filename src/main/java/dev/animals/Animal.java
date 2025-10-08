@@ -1,6 +1,5 @@
 package dev.animals;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -18,9 +17,9 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
     /**
      * Starts the animal's movement.
      */
-    public synchronized void run(){
+    public synchronized void run() {
 
-//        Check of the race is over
+//        Run as long as the race is not over
         while (!RaceManager.getInstance().isRaceOver()) {
 
 //            increment position with a random integer
@@ -36,17 +35,32 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
                 RaceManager.getInstance().endRace();
             }
         }
-    };
+    }
 
-    public void checkPosition(){
+
+    /**
+     * check the position of the animal and act accordingly
+     * End the lap if it has reached the max distance and start a new one if needed
+     * else end the race by interrupting the thread
+     */
+    public synchronized void checkPosition() {
 //            Check if position is equals to or exceeds the total distance of the race
-        if (position >= totalDistance ) {
-//                If so, set the race as over and the winner in the RaceManager singleton instance and interrupt the thread
+        if (position >= totalDistance) {
             this.position = totalDistance;
-            RaceManager.getInstance().setRaceIsOver(true);
-            RaceManager.getInstance().setWinner(this);
-            RaceManager.getInstance().addWinner(this);
-            Thread.currentThread().interrupt();
+                RaceManager.getInstance().setLapWinner(this);
+                RaceManager.getInstance().addRaceWinner(this);
+                RaceManager.getInstance().endLap();
+
+//                If so, check if there is more laps to be played
+            if (RaceManager.getInstance().noMoreLaps()) {
+//                If there is not, end the race by interrupting the thread
+                RaceManager.getInstance().setRaceIsOver(true);
+                Thread.currentThread().interrupt();
+            }
+            else {
+                System.out.println("Nouvelle manche");
+            }
+
         } else {
 //                If not, print the position of the animal
             System.out.println(createPositionString());
@@ -58,13 +72,14 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
      *
      * @return A string representing the animal's position.
      */
-    public String createPositionString(){
-        int percent = (int)((this.position / this.totalDistance) * 100);
+    public String createPositionString() {
+        int percent = (int) ((this.position / this.totalDistance) * 100);
         String positionString = "-".repeat(Math.max(0, percent)) +
                 this.getIcon() +
                 "-".repeat(Math.max(0, 100 - percent));
-        return (this.getName() + " : " + positionString + percent + "%");
+        return (this.getName() + " : " + positionString + " " + percent + "%");
     }
+
     public double getTotalDistance() {
         return totalDistance;
     }
