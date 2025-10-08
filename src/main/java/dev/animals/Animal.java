@@ -26,41 +26,32 @@ public sealed class Animal permits Turtle, Rabbit, Horse {
 //            increment position with a random integer
             this.position += rand.nextInt(10);
 
-            if (this.position > totalDistance){
-                this.position = totalDistance;
-            }
-
-//            Check if position is equals to or exceeds the total distance of the race
-            if (position >= totalDistance ) {
-//                If so, set the race as over and the winner in the RaceManager singleton instance and interrupt the thread
-                RaceManager.getInstance().setRaceIsOver(true);
-                RaceManager.getInstance().setWinner(this);
-                Thread.currentThread().interrupt();
-            } else {
-//                If not, print the position of the animal
-                System.out.println(createPositionString());
-            }
+            checkPosition();
 
 //            try catch block to determine the interval of each call of the run method
             try {
                 Thread.sleep(rand.nextInt(1000));
             } catch (InterruptedException e) {
-//                The catch block is triggered when the thread is interrupted
-                System.out.println("Course terminée !");
-                System.out.println("Vainqueur : " + RaceManager.getInstance().getWinner());
-                System.out.println("Classement final :");
-                List<String> leaderboard = RaceManager.getInstance().getLeaderboard();
-                for (String name : leaderboard){
-                    System.out.println("Numéro " + (leaderboard.indexOf(name) + 1) + " : " + name);
-                }
-                System.out.println("État final de la course :");
-                for (Animal animal : RaceManager.getInstance().getAnimals())
-                {
-                    System.out.println(animal.createPositionString());
-                }
+//                The catch block is triggered when the thread is interrupted by the checkPosition method
+                RaceManager.getInstance().endRace();
             }
         }
     };
+
+    public void checkPosition(){
+//            Check if position is equals to or exceeds the total distance of the race
+        if (position >= totalDistance ) {
+//                If so, set the race as over and the winner in the RaceManager singleton instance and interrupt the thread
+            this.position = totalDistance;
+            RaceManager.getInstance().setRaceIsOver(true);
+            RaceManager.getInstance().setWinner(this);
+            RaceManager.getInstance().addWinner(this);
+            Thread.currentThread().interrupt();
+        } else {
+//                If not, print the position of the animal
+            System.out.println(createPositionString());
+        }
+    }
 
     /**
      * Creates a string representing the animal's position.

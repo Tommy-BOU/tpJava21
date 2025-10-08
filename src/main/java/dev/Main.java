@@ -7,8 +7,6 @@ import dev.animals.Turtle;
 
 public class Main {
     public static void main(String[] args) {
-        boolean gameOver = false;
-
         Turtle turtle = new Turtle();
         Rabbit rabbit = new Rabbit();
         Horse horse = new Horse();
